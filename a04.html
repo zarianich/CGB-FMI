@@ -1,0 +1,201 @@
+<html>
+	<head>
+		<style>
+			body { margin: 0; }
+			canvas { width: 100%; height: 100% }
+		</style>
+	</head>
+	<body>
+		<script src="three.min.js"></script>
+        <script src="CSG.js"></script>
+		<script>
+			
+			var renderer = new THREE.WebGLRenderer({antialias:true});
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setAnimationLoop( drawFrame );
+			document.body.appendChild( renderer.domElement );
+
+			var scene = new THREE.Scene();
+			scene.background = new THREE.Color( 'tan' );
+			
+			var aspect = window.innerWidth/window.innerHeight;
+			var camera = new THREE.PerspectiveCamera( 30, aspect );
+			camera.position.set( 0, 10, 40 );
+			camera.lookAt( new THREE.Vector3() );
+
+
+            var shape = new THREE.Shape();
+			shape.moveTo(  0, 0.7 );
+            shape.lineTo( 10, 4);
+            shape.lineTo( 6, 0);
+            shape.lineTo( 10, -4);
+            shape.lineTo( 0, -0.7);
+            
+
+            var extrudeSettings = { depth: 1, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 0.1, bevelThickness: 0.1, curveSegments: 60 };
+			var geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
+
+            var guitar = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial({ color: 'red'}) );
+
+
+            var shape = new THREE.Shape();
+			shape.moveTo(  0, 0.7 );
+            shape.lineTo( -8, 0.7);
+            shape.lineTo( -8, -0.7);
+            shape.lineTo( 0, -0.7);
+            
+
+            var extrudeSettings = { depth: 1, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 0.1, bevelThickness: 0.1, curveSegments: 60 };
+			var geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
+
+            var neck = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial({ color: 'brown'}) );
+            guitar.add( neck );
+
+            var shape = new THREE.Shape();
+			shape.moveTo(  -8, 0.7 );
+            shape.lineTo( -12, 2);
+            shape.lineTo( -12, 1);
+            shape.lineTo( -9, -1);
+            shape.lineTo( -8, -0.7);
+            
+
+            var extrudeSettings = { depth: 1, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 0.1, bevelThickness: 0.1, curveSegments: 60 };
+			var geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
+
+            var head = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial({ color: 'red'}) );
+            guitar.add( head );
+
+            var shape = new THREE.Shape();
+			shape.moveTo(  0, 0 );
+            shape.lineTo(  1, 0);
+            shape.lineTo(  1, -1.5);
+            shape.lineTo(  0, -1.5);
+            shape.lineTo(  0, 0);
+            
+
+            var extrudeSettings = { depth: 1, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 0.1, bevelThickness: 0.1, curveSegments: 60 };
+			var geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
+
+            var pickup = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial({ color: 'white'}) );
+            pickup.position.set (1,0.8,0.3);
+            guitar.add( pickup );
+
+            var pickup = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial({ color: 'white'}) );
+            pickup.position.set (4,0.8,0.3);
+            guitar.add( pickup );
+
+            var shape = new THREE.Shape();
+			shape.moveTo(  0, 0 );
+            shape.lineTo(  0.3, 0);
+            shape.lineTo(  0.3, -1.5);
+            shape.lineTo(  0, -1.5);
+            shape.lineTo(  0, 0);
+            
+
+            var extrudeSettings = { depth: 1, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 0.1, bevelThickness: 0.1, curveSegments: 60 };
+			var geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
+
+            var bridge = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial({ color: 'white'}) );
+            bridge.position.set (-8,0.8,0.3);
+            guitar.add( bridge );
+
+            var shape = new THREE.Shape();
+			shape.moveTo(  0, 0 );
+            shape.lineTo(  12, 0);
+            shape.lineTo(  12, -0.01);
+            shape.lineTo(  0, -0.01);
+            shape.lineTo(  0, 0);
+            
+
+            var extrudeSettings = { depth: 1, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 0.1, bevelThickness: 0.1, curveSegments: 60 };
+			var geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
+
+            var string = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial({ color: 'white'}) );
+            string.position.set (-8,0.6,0.3);
+            guitar.add( string );
+
+            var string = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial({ color: 'white'}) );
+            string.position.set (-8,0.35,0.3);
+            guitar.add( string );
+
+            var string = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial({ color: 'white'}) );
+            string.position.set (-8,0.15,0.3);
+            guitar.add( string );
+
+            var string = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial({ color: 'white'}) );
+            string.position.set (-8,-0.1,0.3);
+            guitar.add( string );
+
+            var string = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial({ color: 'white'}) );
+            string.position.set (-8,-0.35,0.3);
+            guitar.add( string );
+
+            var string = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial({ color: 'white'}) );
+            string.position.set (-8,-0.6,0.3);
+            guitar.add( string );
+
+            
+            guitar.position.set (1,2,0);
+            scene.add( guitar );
+
+
+            var body = new THREE.Mesh( new THREE.CylinderGeometry( 3, 3, 2, 6 ) );
+
+            var hole = new THREE.Mesh( new THREE.CylinderGeometry( 1.7, 1.7, 2, 32 ) );
+			hole.position.set( 0, 0, 0 );
+
+            var csg = new CSG();
+			csg.subtract( [body, hole] );
+			var nut = csg.toMesh();
+
+
+            var hole2 = new THREE.Mesh( new THREE.CylinderGeometry( 1.8, 1.8, 0.1, 32 ) );
+
+            for(var i = -1;i<=1;i+=0.2){
+			    hole2.position.set( 0, i, 0 );
+                var csg = new CSG();
+			    csg.subtract( [nut, hole2] );
+                nut = csg.toMesh();
+            }
+
+            
+            var hole3 = new THREE.Mesh( new THREE.CylinderGeometry( 0.5, 0.5, 7, 40 ) );
+            hole3.position.y = 0.9;
+			hole3.rotation.x = Math.PI/2;
+			hole3.rotation.z = Math.PI/6;
+
+            var hole4 = new THREE.Mesh( new THREE.CylinderGeometry( 0.5, 0.5, 7, 40 ) );
+            hole4.position.y = 0.9;
+			hole4.rotation.x = Math.PI/2;
+			hole4.rotation.z = 3*Math.PI/6;
+
+            var hole5 = new THREE.Mesh( new THREE.CylinderGeometry( 0.5, 0.5, 7, 40 ) );
+            hole5.position.y = 0.9;
+			hole5.rotation.x = Math.PI/2;
+			hole5.rotation.z = 5*Math.PI/6;
+
+            var csg = new CSG();
+			csg.subtract( [nut, hole3, hole4, hole5] );
+            nut = csg.toMesh();
+
+			nut.material = new THREE.MeshPhongMaterial( { color: 'gray', specular: 'white' });
+            nut.position.set(0, -5, 0);
+			scene.add( nut );
+            
+            var light = new THREE.PointLight();
+			light.position.set( 0, 5, 10 );
+			scene.add( light );
+			
+			function drawFrame()
+			{
+				
+                guitar.rotation.y += 0.003;
+                nut.rotation.y += 0.003;
+                nut.rotation.x += 0.003;
+                nut.rotation.z += 0.003;
+			
+				renderer.render( scene, camera );
+			}
+		</script>
+	</body>
+</html>

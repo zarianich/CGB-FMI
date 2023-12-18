@@ -1,0 +1,175 @@
+<html>
+	<head>
+		<style>
+			body { margin: 0; }
+			canvas { width: 100%; height: 100% }
+		</style>
+	</head>
+	<body>
+		<script src="three.min.js"></script>
+        <script src="CSG.js"></script>
+		<script>		
+			
+			var renderer = new THREE.WebGLRenderer({antialias:true});
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setAnimationLoop( drawFrame );
+			document.body.appendChild( renderer.domElement );
+
+			renderer.shadowMap.enabled = true;
+			renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+			var scene = new THREE.Scene();
+			scene.background = new THREE.Color( 'tan' );
+			
+			var aspect = window.innerWidth/window.innerHeight;
+			var camera = new THREE.PerspectiveCamera( 30, aspect );
+			camera.position.set( 0, 0, 40 );
+			camera.lookAt( new THREE.Vector3( 0, -15, 0 ) );
+
+            var body = new THREE.Mesh( new THREE.CylinderGeometry( 3, 3, 8, 32 ) );
+
+            var inner = new THREE.Mesh( new THREE.CylinderGeometry( 2.5, 2.5, 7.5, 32 ) );
+			inner.position.set( 0, 0.5, 0 );
+            
+            var csg = new CSG();
+			csg.subtract( [body, inner] );
+            var cup = csg.toMesh();
+
+            cup.material = new THREE.MeshPhongMaterial({ color: 'lightcyan', transparent: true, opacity: 0.3, shininess: 0.1, specular: 'white', side:THREE.BackSide});
+            cup.position.set ( 0, -20, 0 );
+            cup.receiveShadow = true;
+            scene.add ( cup );
+
+            liquid = new THREE.Mesh( 
+                new THREE.CylinderGeometry( 2.4, 2.4, 6, 32 ),
+                new THREE.MeshPhongMaterial({ color: 'lightcyan', transparent: true, opacity: 0.7 ,shininess: 0, specular: 'white', side:THREE.BackSide})
+            );
+            liquid.position.set ( 0, -19.5, 0 );
+            scene.add ( liquid );
+
+            var iceCube = new THREE.Mesh(
+				new THREE.BoxGeometry( 1, 1, 1,),
+				new THREE.MeshPhongMaterial( {color: 'white', shininess: 0, specular: 'white'} )
+			);
+            iceCube.receiveShadow = true;
+            iceCube.position.set ( 0, -13, 0);
+            iceCube.v = new THREE.Vector3( -0.02, -0.05, -0.02 );
+            iceCube.enteredSurface = false;
+            iceCube.hitBottom = false;
+            scene.add ( iceCube );
+
+            var iceCube2 = new THREE.Mesh(
+				new THREE.BoxGeometry( 1, 1, 1,),
+				new THREE.MeshPhongMaterial( {color: 'white', shininess: 0, specular: 'white'} )
+			);
+            iceCube2.receiveShadow = true;
+            iceCube2.position.set ( 0, -12, 0);
+            iceCube2.enteredSurface = false;
+            iceCube2.v = new THREE.Vector3( -0.02, -0.05, -0.02 );
+            scene.add ( iceCube2 );
+
+            var iceCube3 = new THREE.Mesh(
+				new THREE.BoxGeometry( 1, 1, 1,),
+				new THREE.MeshPhongMaterial( {color: 'white', shininess: 0, specular: 'white'} )
+			);
+            iceCube3.receiveShadow = true;
+            iceCube3.position.set ( 0, -11, 0);
+            iceCube3.enteredSurface = false;
+            iceCube3.v = new THREE.Vector3( -0.02, -0.05, -0.02 );
+            scene.add ( iceCube3 );
+            
+
+            var light = new THREE.PointLight( 'white', 0.5 );
+			light.position.set( 0, 5, 10 );
+			light.castShadow = false;
+			scene.add( light );
+
+            var light = new THREE.PointLight( 'white' );
+			light.position.set( 0, 10, 20 );
+			light.castShadow = true;
+			scene.add( light );
+
+            var clock = new THREE.Clock();
+            
+            var minY = -23;
+            var surface = -16.5;
+
+            function drawFrame()
+			{
+				scene.rotation.y += 0.003;
+
+                var t = clock.getElapsedTime();
+
+                if (iceCube.position.y <= surface) {iceCube.enteredSurface = true;}
+
+                if (iceCube.enteredSurface == false){
+                    iceCube.position.y += iceCube.v.y;
+                }else{
+                    iceCube.position.y += iceCube.v.y/5;
+                    if (Math.abs (iceCube.position.y - iceCube2.position.y) <= 1
+                        && iceCube2.enteredSurface == true ){
+                        
+                        iceCube.v.y *= -1;
+                    }
+                    if ((iceCube.position.y >= surface -2) && iceCube.hitBottom == true){
+                        iceCube.v.y = 0;
+                    }
+                    if (iceCube.position.y <= minY) {
+                        iceCube.position.y = minY - (iceCube.position.y - minY);
+                        iceCube.v.y *= -1;
+                        iceCube.hitBottom = true;
+                    }
+                }
+
+                if ( t > 3 ){
+                    if (iceCube2.position.y <= surface) {iceCube2.enteredSurface = true;}
+
+                    if (iceCube2.enteredSurface == false){
+                        iceCube2.position.y += iceCube2.v.y;
+                    }else{
+                        iceCube2.position.y += iceCube2.v.y/5;
+                    if (Math.abs (iceCube2.position.y - iceCube.position.y) <= 1){
+                        
+                        iceCube2.v.y *= -1;
+                    }
+                    if (Math.abs (iceCube2.position.y - iceCube3.position.y) <= 1){
+                        
+                        iceCube2.v.y *= -1;
+                    }
+                    if ((iceCube2.position.y >= surface -1) && iceCube.hitBottom == true){
+                        iceCube2.v.y = 0;
+                    }
+                    if (iceCube2.position.y <= minY - 1) {
+                        iceCube2.position.y = minY - (iceCube2.position.y - minY);
+                        iceCube2.v.y *= -1;
+                    }
+                    }
+                }
+
+                if ( t > 6 ){
+                    if (iceCube3.position.y <= surface) {iceCube3.enteredSurface = true;}
+
+                    if (iceCube3.enteredSurface == false){
+                        iceCube3.position.y += iceCube3.v.y;
+                    }else{
+                        iceCube3.position.y += iceCube3.v.y/5;
+                    if (Math.abs (iceCube3.position.y - iceCube2.position.y) <= 1){
+                        
+                        iceCube3.v.y *= -1;
+                    }
+                    if (iceCube3.position.y >= surface){
+                        iceCube3.v.y = 0;
+                    }
+                    if (iceCube3.position.y <= minY) {
+                        iceCube3.position.y = minY - (iceCube3.position.y - minY);
+                        iceCube3.v.y *= -1;
+                    }
+                    }
+                }
+                
+				
+				renderer.render( scene, camera );
+			}
+		</script>
+	</body>
+</html>

@@ -1,0 +1,183 @@
+<html>
+	<head>
+		<style>
+			body { margin: 0; }
+			canvas { width: 100%; height: 100% }
+		</style>
+	</head>
+	<body>
+		<script src="three.min.js"></script>
+		<script>
+			
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setAnimationLoop( drawFrame );
+			document.body.appendChild( renderer.domElement );
+
+			var scene = new THREE.Scene();
+			
+			var aspect = window.innerWidth/window.innerHeight;
+			var camera = new THREE.PerspectiveCamera( 30, aspect );
+			camera.position.set( 20, 10, 40 );
+			camera.lookAt( new THREE.Vector3() );
+
+			var house = new THREE.Group();
+			scene.add( house );
+			
+            //двор
+			var geometry = new THREE.BoxGeometry(15, 0.5, 15);
+			var material = new THREE.MeshPhongMaterial( {color:'#05472A'} );
+			var yard = new THREE.Mesh( geometry, material );
+            yard.position.set(0, -4, 0);
+			house.add( yard );
+
+            //къщата
+            geometry = new THREE.BoxGeometry(5, 5.5, 5);
+            material = new THREE.MeshPhongMaterial( {color:'black'} );
+            var mainHouse = new THREE.Mesh( geometry, material );
+            mainHouse.position.set( 0, -1.5, -4 );
+
+            geometry = new THREE.OctahedronGeometry(3.5, 0);
+            var roof = new THREE.Mesh( geometry, material );
+            roof.position.set ( 0, 2.7, 0);
+            roof.rotation.y = Math.PI/4;
+            mainHouse.add( roof );
+
+            geometry = new THREE.BoxGeometry(1, 2, 0.2);
+            material = new THREE.MeshPhongMaterial( {color:'brown'} )
+            var door = new THREE.Mesh( geometry, material );
+            door.position.set( 0.5, -1.3, 2.5 );
+            mainHouse.add( door );
+
+            door = door.clone();
+            door.position.set (-0.5, -1.3, 2.5);
+            mainHouse.add( door );
+
+			house.add( mainHouse );
+
+            geometry = new THREE.CylinderGeometry( 2.5, 2.5, 7, 32 );
+            material = new THREE.MeshPhongMaterial( {color:'black'} );
+            var tower = new THREE.Mesh( geometry, material );
+            tower.position.set( 4.5, -0.3, -4 );
+            geometry = new THREE.ConeGeometry( 2.5, 3, 32 );
+            var roof = new THREE.Mesh( geometry, material );
+            roof.position.set( 0, 5, 0 );
+            tower.add( roof );
+            door = door.clone();
+            door.position.set ( 0, -2.5, 2.5);
+            tower.add( door );
+			house.add( tower );
+
+            tower = tower.clone();
+            tower.position.set (-4.5, -0.3, -4);
+            house.add( tower );
+
+            //прозорци
+            //front
+            geometry = new THREE.CircleGeometry(0.4, 16);
+            material = new THREE.MeshPhongMaterial( {color:'orange'} );
+            var houseWindow = new THREE.Mesh( geometry, material );
+            houseWindow.position.set (-1.5, 0, -1.45);
+            var light = new THREE.PointLight('orange');
+            light.position.set( 0, 0, 0.3 );
+			houseWindow.add( light );
+            house.add( houseWindow );
+
+            houseWindow = houseWindow.clone();
+            houseWindow.position.set (1.5, 0, -1.45);
+            house.add( houseWindow );
+
+            houseWindow = houseWindow.clone();
+            houseWindow.position.set (4.6, 0, -1.45);
+            house.add( houseWindow );
+
+            houseWindow = houseWindow.clone();
+            houseWindow.position.set (-4.6, 0, -1.45);
+            house.add( houseWindow );
+
+            //back
+            houseWindow = houseWindow.clone();
+            houseWindow.position.set (-4.6, 0, -6.5);
+            houseWindow.rotation.y = Math.PI;
+            house.add( houseWindow );
+
+            houseWindow = houseWindow.clone();
+            houseWindow.position.set (4.6, 0, -6.5);
+            house.add( houseWindow );
+
+            houseWindow = houseWindow.clone();
+            houseWindow.position.set (1.5, 0, -6.6);
+            house.add( houseWindow );
+
+            houseWindow = houseWindow.clone();
+            houseWindow.position.set (-1.5, 0, -6.6);
+            house.add( houseWindow );
+
+            //sides
+            houseWindow = houseWindow.clone();
+            houseWindow.position.set (7, 0, -4);
+            houseWindow.rotation.y = Math.PI/2;
+            house.add( houseWindow );
+
+            houseWindow = houseWindow.clone();
+            houseWindow.position.set (-7, 0, -4);
+            houseWindow.rotation.y = -Math.PI/2;
+            house.add( houseWindow );
+
+            
+            //pumpkins
+            geometry = new THREE.SphereGeometry( 0.5, 32, 32 ); 
+            material = new THREE.MeshBasicMaterial( { color: 'orange' } ); 
+            pumpkin = new THREE.Mesh( geometry, material ); 
+            pumpkin.position.set(3, -3.3, 3);
+            scene.add( pumpkin );
+			
+            pumpkin = pumpkin.clone();
+            pumpkin.position.set(5, -3.3, 5);
+            scene.add( pumpkin );
+
+            pumpkin = pumpkin.clone();
+            pumpkin.position.set(-6, -3.3, 5);
+            scene.add( pumpkin );
+
+            pumpkin = pumpkin.clone();
+            pumpkin.position.set(-4, -3.3, 3);
+            scene.add( pumpkin );
+
+            //moon
+            geometry = new THREE.SphereGeometry( 2, 32, 32 ); 
+            material = new THREE.MeshBasicMaterial( { color: 'white' } ); 
+            moon = new THREE.Mesh( geometry, material ); 
+            moon.position.set(-10, 9, -3);
+            var light = new THREE.PointLight('white');
+			moon.add( light );
+            scene.add( moon );
+
+            geometry = new THREE.OctahedronGeometry(0.5, 0);
+            material = new THREE.MeshBasicMaterial( { color: 'yellow' } ); 
+            var star = new THREE.Mesh( geometry, material );
+            star.position.set ( 0, 10, -3);
+            var light = new THREE.PointLight('yellow');
+			star.add( light );
+            scene.add( star);
+
+            star = star.clone();
+            star.position.set(-7, 9, 7);
+            scene.add( star );
+
+            star = star.clone();
+            star.position.set(7, 10, 7);
+            scene.add( star );
+
+            star = star.clone();
+            star.position.set(8, 9, -4);
+            scene.add( star );
+
+			function drawFrame()
+			{
+                scene.rotation.y -= 0.002;
+				renderer.render( scene, camera );
+			}
+		</script>
+	</body>
+</html>

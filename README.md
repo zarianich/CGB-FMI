@@ -1,2 +1,2 @@
 # CGB-FMI
- Computer Grapichs Basics course with Three.js
+ Computer Graphics Basics course with Three.js
